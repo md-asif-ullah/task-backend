@@ -159,4 +159,35 @@ const getUserById = async (req, res, next) => {
   }
 };
 
-export { userSingUp, getAllUsers, getUserById, userLoginIn };
+const resetPassword = async (req, res, next) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    if (!email || !newPassword) {
+      return errorResponse(res, {
+        statusCode: 400,
+        message: "Email and new password are required",
+      });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return errorResponse(res, {
+        statusCode: 404,
+        message: "User not found",
+      });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "Password reset successfully",
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export { userSingUp, getAllUsers, getUserById, userLoginIn, resetPassword };
