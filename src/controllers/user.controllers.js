@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { jwt_access_secret, jwt_refresh_secret } from "../../config/config.js";
 import User from "../models/user.model.js";
 import createJwt from "../utils/createJwt.js";
@@ -70,6 +71,63 @@ const userSingUp = async (req, res, next) => {
   }
 };
 
+const userLoginIn = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return errorResponse(res, {
+        statusCode: 400,
+        message: "Email and password are required",
+      });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+      return errorResponse(res, {
+        statusCode: 401,
+        message: "Invalid email or password",
+      });
+    }
+
+    const token = createJwt({ email: user.email }, jwt_access_secret, "1h");
+
+    res.cookie("token", token, {
+      maxAge: 3600000,
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
+    const refreshToken = createJwt(
+      { email: user.email },
+      jwt_refresh_secret,
+      "7d"
+    );
+
+    res.cookie("refreshToken", refreshToken, {
+      maxAge: 604800000,
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "User signed in successfully",
+      data: {
+        user: {
+          id: user._id,
+          fullName: user.fullName,
+          email: user.email,
+        },
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find().select("-__v -password");
@@ -101,4 +159,4 @@ const getUserById = async (req, res, next) => {
   }
 };
 
-export { userSingUp, getAllUsers, getUserById };
+export { userSingUp, getAllUsers, getUserById, userLoginIn };
