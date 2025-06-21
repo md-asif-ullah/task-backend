@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 import createJwt from "../utils/createJwt.js";
 import { errorResponse, successResponse } from "./response.controllers.js";
 
-const addUser = async (req, res, next) => {
+const userSingUp = async (req, res, next) => {
   try {
     const { fullName, email, password } = req.body;
 
@@ -101,4 +101,4 @@ const getUserById = async (req, res, next) => {
   }
 };
 
-export { addUser, getAllUsers, getUserById };
+export { userSingUp, getAllUsers, getUserById };
