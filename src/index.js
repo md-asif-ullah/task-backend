@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { port } from "../config/config.js";
 import cookieParser from "cookie-parser";
 import dbConfig from "../config/db.config.js";
+import userRouter from "./Routes/user.routers.js";
 
 const app = express();
 
@@ -20,6 +21,8 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   res.send("server is running");
 });
+
+app.use("/api/v1", userRouter);
 
 // handle errors
 
