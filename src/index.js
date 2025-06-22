@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
-import { port } from "../config/config.js";
+import { origin, port } from "../config/config.js";
 import cookieParser from "cookie-parser";
 import dbConfig from "../config/db.config.js";
 import userRouter from "./Routes/user.routers.js";
@@ -13,7 +13,7 @@ const app = express();
 // middleware
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: origin,
     credentials: true,
   })
 );
