@@ -190,4 +190,66 @@ const resetPassword = async (req, res, next) => {
   }
 };
 
-export { userSingUp, getAllUsers, getUserById, userLoginIn, resetPassword };
+const logout = (req, res) => {
+  res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "none" });
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
+
+  return successResponse(res, {
+    statusCode: 200,
+    message: "Logged out successfully",
+  });
+};
+
+const profile = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token) {
+      return errorResponse(res, {
+        statusCode: 401,
+        message: "Unauthorized",
+      });
+    }
+
+    const decoded = jwt.verify(token, jwt_access_secret);
+    const email = decoded.email;
+
+    if (!email) {
+      return errorResponse(res, {
+        statusCode: 401,
+        message: "Unauthorized",
+      });
+    }
+
+    const user = await User.findOne({ email }).select("-__v -password");
+
+    if (!user) {
+      return errorResponse(res, {
+        statusCode: 404,
+        message: "User not found",
+      });
+    }
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "User profile retrieved successfully",
+      data: user,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export {
+  userSingUp,
+  getAllUsers,
+  getUserById,
+  userLoginIn,
+  resetPassword,
+  logout,
+  profile,
+};
