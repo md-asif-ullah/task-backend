@@ -6,6 +6,7 @@ import { port } from "../config/config.js";
 import cookieParser from "cookie-parser";
 import dbConfig from "../config/db.config.js";
 import userRouter from "./Routes/user.routers.js";
+import taskRouter from "./Routes/task.routers.js";
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1", userRouter);
+app.use("/api/v1", taskRouter);
 
 // handle errors
 

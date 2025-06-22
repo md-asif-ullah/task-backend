@@ -3,6 +3,7 @@ import { jwt_access_secret, jwt_refresh_secret } from "../../config/config.js";
 import User from "../models/user.model.js";
 import createJwt from "../utils/createJwt.js";
 import { errorResponse, successResponse } from "./response.controllers.js";
+import jwt from "jsonwebtoken";
 
 const userSingUp = async (req, res, next) => {
   try {

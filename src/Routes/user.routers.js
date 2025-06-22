@@ -12,11 +12,11 @@ import {
 const userRouter = express.Router();
 
 userRouter.get("/users/logout", logout);
+userRouter.get("/users/profile", profile);
 userRouter.get("/users", getAllUsers);
 userRouter.post("/users/singup", userSingUp);
 userRouter.get("/users/:id", getUserById);
 userRouter.post("/users/login", userLoginIn);
 userRouter.post("/users/reset-password", resetPassword);
-userRouter.get("/users/profile", profile);
 
 export default userRouter;
